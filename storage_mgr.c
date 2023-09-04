@@ -7,6 +7,7 @@
 
 
 FILE *file;
+char *fileName = "stg_mgr";
 
 /* Initializing the storage manager */
 /*
@@ -17,15 +18,20 @@ malloc
 memset
 fclose
 free
-destroy
+remove
 */
+
+int main(){
+    initStorageManager();
+    createPageFile(fileName);
+
+    return 0;
+}
 
 void initStorageManager(void)
 {
     file = NULL;
-    char *fileName = "stgr";
-
-    createPageFile(fileName);
+    printf("The storage manager is initialized!\n");
 }
 
 RC createPageFile(char *fileName)
@@ -37,16 +43,16 @@ RC createPageFile(char *fileName)
 
     RC return_code = RC_OK;
 
-    FILE *file = fopen(fileName, "rb");
+    file = fopen(fileName, "r");
    
     if (file != NULL)
     {
-        printf("FILE ALREADY EXISTS");
+        printf("FILE ALREADY EXISTS!\n");
         return return_code; 
     }
     else
     {
-        FILE *file = fopen(fileName, "wb");
+        file = fopen(fileName, "w");
         char *buffer = (char *)malloc(PAGE_SIZE * sizeof(char));
 
         if (buffer == NULL)
@@ -58,6 +64,7 @@ RC createPageFile(char *fileName)
         }
 
         memset(buffer, '\0', 1);
+        printf("The file is created successfully!\n");
 
         free(buffer);
         fclose(file);
@@ -68,7 +75,7 @@ RC createPageFile(char *fileName)
 
 RC openPageFile(char *fileName, SM_FileHandle *fHandle)
 {
-    File *file = fopen(fileName, fHandle);
+    file = fopen(fileName, "r");
 
     if (file == NULL){
         return RC_FILE_NOT_FOUND;
@@ -82,13 +89,13 @@ RC openPageFile(char *fileName, SM_FileHandle *fHandle)
 RC closePageFile(SM_FileHandle *fHandle)
 {
     RC return_code;
-    bool closeFile = fclose(fHandle);
+    bool closeFile = fclose(file);
 
     if (closeFile == true){
-        printf("File is closed!");
+        printf("File is closed!\n");
         return_code = RC_OK;
     } else{
-        printf("Problem occured while closing file!");
+        printf("Problem occured while closing file!\n");
         return_code = RC_FILE_NOT_FOUND;
     }
 
@@ -101,10 +108,10 @@ RC destroyPageFile(char *fileName)
     bool removeFile = remove(fileName);
 
     if (removeFile == true){
-        printf("File is removed!");
+        printf("File is removed!\n");
         return_code = RC_OK;
     } else{
-        printf("Problem occured while destroying file!");
+        printf("Problem occured while destroying file!\n");
         return_code = RC_FILE_NOT_FOUND;
     }
 
